@@ -49,6 +49,6 @@ MODULE MODULE_CFDMAINDATA
     
     integer(ip)         :: frequency_dump
     
-    type(properties), dimension(:), pointer :: matInfo
+    type(properties), dimension(:), pointer :: matInfo              
     
 END MODULE MODULE_CFDMAINDATA    
