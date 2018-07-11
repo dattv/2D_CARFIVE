@@ -10,6 +10,21 @@ MODULE MODULE_CFDMAINDATA
     use MODULE_PRECISION
     use MODULE_CONSTANTS
     
+    ! ===> CLASS PROPERTIES <======================================================================
+    type :: properties
+        real(rp)    ::                    gamma = 1.4_rp        ;
+	    real(rp)    ::                        b = 1._rp         ;
+	    real(rp)    ::                      rho = 1.3_rp        ;
+	    real(rp)    ::           r_gas_constant = 8.3144598_rp  ;
+	    real(rp)    ::                       mu = 18.27_rp      ;
+	    real(rp)    ::                   lambda = 1.512041288_rp;
+	    real(rp)    ::   c_sutherland_constant  = 120._rp       ;
+	    real(rp)    ::              temperature = 291.15_rp     ;
+        real(rp)    ::                       pi = MPI           ;
+        real(rp)    ::                       cp = 1._rp         ;
+    end type properties
+    ! ===> END CLASS PROPERTIES <==================================================================
+    
     integer(ip) :: time_step_max    ! MAXIMUM PHYSICAL TIME STEPS
     real(rp)    :: CFL              ! CORRANT FEDRIC LEVI NUMBER
     real(rp)    :: t_final          ! FINAL TIME
@@ -33,5 +48,7 @@ MODULE MODULE_CFDMAINDATA
     integer(ip)         :: I_limiter_type
     
     integer(ip)         :: frequency_dump
+    
+    type(properties), dimension(:), pointer :: matInfo
     
 END MODULE MODULE_CFDMAINDATA    
