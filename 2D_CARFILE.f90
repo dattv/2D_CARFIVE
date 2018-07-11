@@ -61,8 +61,15 @@
               matInfo(1)%temperature = 293.15_rp ;           matInfo(2)%temperature = 293.15_rp 
                        matInfo(1)%pi = 6.e8_rp   ;                    matInfo(2)%pi = 6.e8_rp   
                        matInfo(1)%cp = 4.1813_rp ;                    matInfo(2)%cp = 4.1813_rp 
-                       
+            
+    matInfo(1)%rho = matInfo(1)%rho/ rho_inf; matInfo(2)%rho = matInfo(2)%rho/ rho_inf
+    matInfo(1)%pi  = matInfo(1)%pi/ p_inf;    matInfo(2)%pi  = matInfo(2)%pi/ p_inf  
+    
+    frequency_dump = 100    
+    
     ! ===> SETUP INITIAL CONDITION FOR MULTIPHASE FLOWS <==========================================
+    call initial_condition(nelm, tree)
+    
     
     continue
     print *, 'Hello World'

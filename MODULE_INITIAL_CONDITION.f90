@@ -28,6 +28,15 @@ MODULE  MODULE_INITIALCONDITION
     return
     end subroutine  initial_2D_simle_check_grid
 !================================================================================================== 
+    subroutine initial_condition(nelm, tree)
+    implicit none
+    integer(ip),                    intent(in)              :: nelm
+    type(quadtree), dimension(:),   intent(inout), target   :: tree
+    
+    
+    return
+    end subroutine initial_condition
+!================================================================================================== 
     subroutine initial_2d_dambreak_single_level(tree)
     implicit none
     type(quadtree), pointer, intent(inout) :: tree
