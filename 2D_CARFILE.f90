@@ -27,6 +27,7 @@
     use MODULE_QUADTREE
     use MODULE_MAKEGRID
     USE MODULE_INITIALCONDITION
+    use MODULE_AMR
     
     implicit none
 
@@ -49,6 +50,7 @@
 
     ! ===> TWO MATERIAL (IN HERE I ASSUME THEY ARE GAS AND LIQUID) <===============================
     allocate(matInfo(2))
+    
     ! ===> SETUP TWO PROPERTIES <==================================================================
     rho_inf = 1.e3_rp; u_inf = 1500._rp; p_inf = 1.e9_rp; L_inf = 1._rp
                     matInfo(1)%gamma = 4.4_rp    ;                 matInfo(2)%gamma = 4.4_rp    
@@ -70,6 +72,10 @@
     ! ===> SETUP INITIAL CONDITION FOR MULTIPHASE FLOWS <==========================================
     call initial_condition(nelm, tree)
     
+    ! ===> ADAPTIAVE MESH FOR INITIAL CONDITION <==================================================
+    call AMR_whole_domain(1, nelm, tree)
+    
+    ! ===> PRINT OUT INITIAL CONDITION <===========================================================
     
     continue
     print *, 'Hello World'
