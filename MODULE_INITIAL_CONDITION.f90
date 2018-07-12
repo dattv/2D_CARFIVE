@@ -12,6 +12,7 @@ MODULE  MODULE_INITIALCONDITION
     use MODULE_CONSTANTS
     use MODULE_QUADTREE
     use MODULE_GENERICMETHOD
+    use MODULE_CFDMAINDATA
     
     contains
 !==================================================================================================
@@ -48,14 +49,21 @@ MODULE  MODULE_INITIALCONDITION
     ! body 
     rho = 1.e3_rp
     if (tree%pts(5)%coord(1) >= half) then
-        a1 = one - tolerance
-        tree%data%u(:) = one
-        tree%data%w(:) = one
+        a1 = one - tolerance; a2 = tolerance
+        rho1_a1 = rho*a1; rho2_a2 = rho*a2; rho_u = 1500._rp; rho_v = zero; p = 1.e9_rp
     else
-        tree%data%u(:) = zero
-        tree%data%w(:) = zero
+        a2 = one - tolerance; a2 = tolerance
+        rho1_a1 = rho*a1; rho2_a2 = rho*a2; rho_u = 1500._rp; rho_v = zero; p = 1.e9_rp
     endif
 
+    ! ===> NONE DIMENSIONAL <======================================================================
+    rho1_a1 = rho1_a1/Rho_inf
+    rho2_a2 = rho2_a2/Rho_inf
+      rho_u =   rho_u/ u_inf
+      rho_v =   rho_v/ u_inf
+          p =       p/p_inf
+          
+              
     return
     end subroutine  initial_2d_dambreak_single_level
 !================================================================================================== 
