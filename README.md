@@ -42,3 +42,6 @@ https://www.sciencedirect.com/science/article/pii/S0021999116306271
 
 [9] "An adaptive interface sharpening methodology for compressible multiphase flows"
 https://www.sciencedirect.com/science/article/pii/S0898122116305351
+
+[10] "A Five-Equation Model for the Simulation of Interfaces between Compressible Fluids"
+https://www.sciencedirect.com/science/article/pii/S0021999102971433
