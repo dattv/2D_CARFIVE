@@ -1,7 +1,7 @@
 # 2D_CARFIVE
-2D Cartesian Quadtree Adaptive Mesh Refinement (AMR) for multiphase Five Equations Model 
+2D Cartesian Quadtree Adaptive Mesh Refinement (AMR) for multiphase Five Equations Model. 
 This source code is developed based on QTAdaptive https://github.com/dattv/QTAdaptive 
-to compile this souce code you need to download QTAdaptive and 2D_CARFIVE 
+to compile this souce code, you need to download QTAdaptive and 2D_CARFIVE 
 into the same folder.
 
 CARTESIAN ADAPTIVE FIVE EQUATION MODEL
@@ -15,6 +15,7 @@ E-MAIL: vandatthang@gmail.com
 SOURCE CODE LINK: https://github.com/dattv/2D_CARFIVE
  
 REFERENCE:
+
 [1] "A quadtree-adaptive multigrid solver for the Serre–Green–Naghdi equations"
 https://www.sciencedirect.com/science/article/pii/S0021999115005902
 
