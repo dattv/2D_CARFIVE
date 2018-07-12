@@ -77,6 +77,7 @@
     call AMR_whole_domain(1, nelm, tree)
     
     ! ===> PRINT OUT INITIAL CONDITION <===========================================================
+    call output_2D("INITIAL.TEC", nelm, tree)
     
     continue
     print *, 'Hello World'

@@ -49,11 +49,11 @@ MODULE  MODULE_INITIALCONDITION
     
     ! body 
     rho = 1.e3_rp
-    if (tree%pts(5)%coord(1) >= half) then
+    if (tree%pts(5)%coord(1) <= half) then
         a1 = one - tolerance; a2 = tolerance
         rho1_a1 = rho*a1; rho2_a2 = rho*a2; rho_u = 1500._rp; rho_v = zero; p = 1.e9_rp
     else
-        a2 = one - tolerance; a2 = tolerance
+        a2 = one - tolerance; a1 = tolerance
         rho1_a1 = rho*a1; rho2_a2 = rho*a2; rho_u = 1500._rp; rho_v = zero; p = 1.e9_rp
     endif
 
