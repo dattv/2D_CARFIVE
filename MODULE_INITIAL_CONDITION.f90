@@ -33,6 +33,7 @@ MODULE  MODULE_INITIALCONDITION
     integer(ip),                    intent(in)              :: nelm
     type(quadtree), dimension(:),   intent(inout), target   :: tree
     
+    call loop_on_quadtree_array(1, nelm, tree, initial_2d_dambreak_single_level)
     
     return
     end subroutine initial_condition
@@ -41,7 +42,13 @@ MODULE  MODULE_INITIALCONDITION
     implicit none
     type(quadtree), pointer, intent(inout) :: tree
     
-    if (tree%pts(5)%coord(1) >= half .and. tree%pts(5)%coord(2) <= half) then 
+    real(rp)    :: rho1_a1, rho2_a2, rho_u, rho_v, p, a1, a2, rho_e
+    real(rp)    :: gamma_mix, pi_mix, u_vel, v_vel, rho_mix, rho
+    
+    ! body 
+    rho = 1.e3_rp
+    if (tree%pts(5)%coord(1) >= half) then
+        a1 = one - tolerance
         tree%data%u(:) = one
         tree%data%w(:) = one
     else
