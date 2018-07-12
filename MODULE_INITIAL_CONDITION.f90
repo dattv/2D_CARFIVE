@@ -13,6 +13,7 @@ MODULE  MODULE_INITIALCONDITION
     use MODULE_QUADTREE
     use MODULE_GENERICMETHOD
     use MODULE_CFDMAINDATA
+    use MODULE_STIFFNESSGAS
     
     contains
 !==================================================================================================
@@ -63,7 +64,17 @@ MODULE  MODULE_INITIALCONDITION
       rho_v =   rho_v/ u_inf
           p =       p/p_inf
           
-              
+    gamma_mix = compute_gamma_mixture(a1, a2, matInfo(1)%gamma, matInfo(2)%gamma)
+       pi_mix = compute_pi_mixture(a1, a2, matInfo(1)%pi, matInfo(2)%pi, matInfo(1)%gamma, matInfo(2)%gamma)
+    
+    rho_mix = rho1_a1 + rho2_a2
+      u_vel = rho_u/rho_mix
+      v_vel = rho_v/rho_mix
+    
+    rho_E = compute_rhoE(P, gamma_mix, pi_mix) + half*(rho_mix*(u_vel**2 + v_vel**2))
+    
+    tree%data%u(:) = (/rho1_a1,    rho2_a2,            rho_u, rho_v, rho_E, a1/)
+    tree%data%w(:) = (/rho1_a1/a1, rho2_a2/(one - a1), u_vel, v_vel, p,     a1/)
     return
     end subroutine  initial_2d_dambreak_single_level
 !================================================================================================== 

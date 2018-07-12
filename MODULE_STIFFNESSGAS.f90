@@ -21,7 +21,7 @@ MODULE MODULE_STIFFNESSGAS
     return
     end function compute_gamma_mixture
 !==================================================================================================  
-    function compute_pi_mix(a1, a2, pi1, pi2, gamma1, gamma2) result(res)
+    function compute_pi_mixture(a1, a2, pi1, pi2, gamma1, gamma2) result(res)
     implicit none
     real(rp), intent(in)    :: a1, a2, pi1, pi2, gamma1, gamma2
     real(rp)                :: res, gamma_mix
@@ -29,7 +29,7 @@ MODULE MODULE_STIFFNESSGAS
     gamma_mix = compute_gamma_mixture(a1, a2, gamma1, gamma2)
           res = (a1*pi1*gamma1/(gamma1 - one) + a2*pi2*gamma2/(gamma2 - one))*(gamma_mix - one)/gamma_mix
     return
-    end function compute_pi_mix
+    end function compute_pi_mixture
 !================================================================================================== 
     function compute_rhoE(P, gamma_mix, pi_mix) result(res)
     implicit none
