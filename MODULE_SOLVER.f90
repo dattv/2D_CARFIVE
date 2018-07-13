@@ -11,6 +11,7 @@ MODULE MODULE_SOLVER
     use MODULE_QUADTREE
     use MODULE_EXSOLVER
     use MODULE_CFDMAINDATA
+    use MODULE_RESIDUAL
     
 !================== DEGINS PATTERN ==================    
     
