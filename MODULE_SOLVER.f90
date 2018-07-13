@@ -196,7 +196,7 @@ MODULE MODULE_SOLVER
     ! ===> call solver <===
     
     time = zero;    iter = 0
-    do while (l_stop)
+    do while (.not. l_stop)
         
         iter = iter + 1
         
