@@ -36,30 +36,62 @@ MODULE MODULE_SOLVER
     
     type, extends(abstract_solver)  :: first_order_explicit_solver
     contains
-    procedure, pass(this)   :: p_solver => 1ST_EX_solver
+    procedure, pass(this)   :: p_solver => first_EX_solver
     end type first_order_explicit_solver
     
-    type, extends(abstract_solver)  :: second_order_explicit_solver
-    contains
-    procedure, pass(this)   :: p_solver => 2ST_EX_solver
-    end type second_order_explicit_solver
-    
-    type, extends(abstract_solver)  :: runge_kutta_explicit_solver
-    contains
-    procedure, pass(this)   :: p_solver => RK_EX_solver
-    end type runge_kutta_explicit_solver
-    
-    type, extends(abstract_solver)  :: second_order_implicit_solver
-    contains
-    procedure, pass(this)   :: p_solver => 2ST_IM_solver
-    end type second_order_implicit_solver
-    
-    type, extends(abstract_solver)  :: implicit_Explicit_solver
-    contains
-    procedure, pass(this)   :: p_solver => IMEX_solver
-    end type implicit_Explicit_solver
+!    type, extends(abstract_solver)  :: second_order_explicit_solver
+!    contains
+!    procedure, pass(this)   :: p_solver => 2ST_EX_solver
+!    end type second_order_explicit_solver
+!    
+!    type, extends(abstract_solver)  :: runge_kutta_explicit_solver
+!    contains
+!    procedure, pass(this)   :: p_solver => RK_EX_solver
+!    end type runge_kutta_explicit_solver
+!    
+!    type, extends(abstract_solver)  :: second_order_implicit_solver
+!    contains
+!    procedure, pass(this)   :: p_solver => 2ST_IM_solver
+!    end type second_order_implicit_solver
+!    
+!    type, extends(abstract_solver)  :: implicit_Explicit_solver
+!    contains
+!    procedure, pass(this)   :: p_solver => IMEX_solver
+!    end type implicit_Explicit_solver
     
 !=========================== END OF FACTORY PATTERN ==========================    
     contains
+!==================================================================================================
+    function create_solver(this, I_solver_type) result(ptr)
+    implicit none
+    class(solver_factory)           :: this
+    class(abstract_solver), pointer :: ptr
+    integer(ip), intent(in)         :: I_solver_type
     
+    if (I_solver_type == 1) then 
+        ! ===> first order explicit type <===
+        allocate(first_order_explicit_solver :: this%solver)
+        
+    else if (I_solver_type == 2) then 
+    else if (I_solver_type == 3) then 
+    else if (I_solver_type == 4) then 
+    else if (I_solver_type == 5) then
+    else
+    end if
+    
+    return
+    end function create_solver
+!==================================================================================================
+    subroutine first_EX_solver(this) 
+    implicit none
+    class(first_order_explicit_solver), intent(in)   :: this
+    
+    return
+    end subroutine first_EX_solver
+!==================================================================================================    
+!==================================================================================================    
+!==================================================================================================    
+!==================================================================================================    
+!==================================================================================================    
+!==================================================================================================    
 END MODULE MODULE_SOLVER    
