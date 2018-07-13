@@ -29,6 +29,7 @@
     use MODULE_MAKEGRID
     USE MODULE_INITIALCONDITION
     use MODULE_AMR
+    use MODULE_SOLVER
     
     implicit none
 
