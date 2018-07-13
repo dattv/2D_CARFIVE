@@ -9,6 +9,7 @@ MODULE MODULE_SOLVER
     
     use MODULE_PRECISION
     use MODULE_QUADTREE
+    use MODULE_EXSOLVER
     
 !================== DEGINS PATTERN ==================    
     
@@ -174,6 +175,8 @@ MODULE MODULE_SOLVER
     
     ! ===> call solver <===
     call solver%p_solver(first, last, tree)
+    
+   
     
     return
     end subroutine solving    

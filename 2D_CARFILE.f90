@@ -36,6 +36,7 @@
     ! Variables
     integer(ip) :: NQ
     integer(ip) :: nelm
+    integer(ip) :: I_solver_type
     type(quadtree), dimension(:), allocatable   :: tree
     ! Body of $2D_CARFILE
     
@@ -80,6 +81,8 @@
     ! ===> PRINT OUT INITIAL CONDITION <===========================================================
     call output_2D("INITIAL.TEC", nelm, tree)
     
+    I_solver_type = 2                                                       ! second order explicit
+    call solving(1, nelm, tree, I_solver_type)
     
     continue
     print *, 'Hello World'
