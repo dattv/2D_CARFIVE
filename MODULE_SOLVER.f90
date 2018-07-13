@@ -10,6 +10,7 @@ MODULE MODULE_SOLVER
     use MODULE_PRECISION
     use MODULE_QUADTREE
     use MODULE_EXSOLVER
+    use MODULE_CFDMAINDATA
     
 !================== DEGINS PATTERN ==================    
     
@@ -19,13 +20,14 @@ MODULE MODULE_SOLVER
     end type abstract_solver
     
     abstract interface
-        subroutine generic_solver(this, first, last, tree)
+        subroutine generic_solver(this, first, last, tree, dt)
         use MODULE_PRECISION
         use MODULE_QUADTREE
         import  :: abstract_solver
         class(abstract_solver), intent(in)                      :: this
         integer(ip), intent(in)                                 :: first, last
         type(quadtree), dimension(first:last), intent(inout)    :: tree
+        real(rp), intent(out)                                   :: dt
         end subroutine generic_solver
     end interface
 
@@ -117,46 +119,53 @@ MODULE MODULE_SOLVER
     return
     end function create_solver
 !==================================================================================================
-    subroutine first_EX_solver(this, first, last, tree) 
+    subroutine first_EX_solver(this, first, last, tree, dt) 
     implicit none
     class(first_order_explicit_solver), intent(in)          :: this
     integer(ip), intent(in)                                 :: first, last
     type(quadtree), dimension(first:last), intent(inout)    :: tree
+    real(rp), intent(out)                                   :: dt
     
     return
     end subroutine first_EX_solver
 !==================================================================================================
-    subroutine second_EX_solver(this, first, last, tree) 
+    subroutine second_EX_solver(this, first, last, tree, dt) 
     implicit none
     class(second_order_explicit_solver), intent(in)         :: this
     integer(ip), intent(in)                                 :: first, last
     type(quadtree), dimension(first:last), intent(inout)    :: tree
+    real(rp), intent(out)                                   :: dt
+    
+        
     return
     end subroutine second_EX_solver    
 !==================================================================================================
-    subroutine RK_EX_solver(this, first, last, tree)
+    subroutine RK_EX_solver(this, first, last, tree, dt)
     implicit none
     class(runge_kutta_explicit_solver), intent(in)          :: this
     integer(ip), intent(in)                                 :: first, last
     type(quadtree), dimension(first:last), intent(inout)    :: tree
+    real(rp), intent(out)                                   :: dt
     
     return
     end subroutine RK_EX_solver 
 !================================================================================================== 
-    subroutine second_IM_solver(this, first, last, tree)
+    subroutine second_IM_solver(this, first, last, tree, dt)
     implicit none
     class(second_order_implicit_solver), intent(in)         :: this
     integer(ip), intent(in)                                 :: first, last
     type(quadtree), dimension(first:last), intent(inout)    :: tree
+    real(rp), intent(out)                                   :: dt
     
     return
     end subroutine second_IM_solver     
 !==================================================================================================
-    subroutine IMEX_solver(this, first, last, tree)
+    subroutine IMEX_solver(this, first, last, tree, dt)
     implicit none
     class(implicit_Explicit_solver), intent(in)             :: this
     integer(ip), intent(in)                                 :: first, last
     type(quadtree), dimension(first:last), intent(inout)    :: tree
+    real(rp), intent(out)                                   :: dt
     
     return
     end subroutine IMEX_solver
@@ -167,6 +176,10 @@ MODULE MODULE_SOLVER
     class(quadtree), dimension(first:last), intent(inout)   :: tree
     integer(ip), intent(in)                                 :: I_solver_type
     
+    integer(ip) :: i
+    logical     :: l_stop = .false.
+    real(rp)    :: dt
+    
     type(solver_factory)            :: factory
     class(abstract_solver), pointer :: solver => null()
     
@@ -174,9 +187,17 @@ MODULE MODULE_SOLVER
     solver => factory%create_solver(I_solver_type)
     
     ! ===> call solver <===
-    call solver%p_solver(first, last, tree)
     
-   
+    time = zero
+    do while (l_stop)
+        
+        call solver%p_solver(first, last, tree, dt)
+        
+        time = time + dt
+        
+        if (time >= t_final) l_stop = .true.
+    end do
+    
     
     return
     end subroutine solving    
