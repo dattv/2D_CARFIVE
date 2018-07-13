@@ -50,7 +50,7 @@ MODULE MODULE_OUTPUT
     ! WRITE TO FILE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 
     iUnit = getUnit(100)
     open(unit = iUnit, file = trim(fileName), action = "write", status = "unknown")
-        print*, "START WRITING DATA TO FILE: ", TRIM(FILENAME)
+        !print*, "START WRITING DATA TO FILE: ", TRIM(FILENAME)
         ! START WRITING <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         write(iUnit,*) 'TITLE = "GRID"'
         write(iUnit,'(100a)') 'VARIABLES = "X","Y","RHO1_A1","RHO2_A2","U","V","P","A1"'
@@ -75,13 +75,13 @@ MODULE MODULE_OUTPUT
             write(iUnit, 10        ) temp_elm(1, i), temp_elm(2, i), temp_elm(3, i), temp_elm(4, i)
         end do
         ! END FILE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        print*, "END WRITING TO FILE"
+        !print*, "END WRITING TO FILE"
     close(unit = iUnit)
     
     ! >>> WRITE FIRST LEVEL
     iUnit = getUnit(100);   first_level_fileName = "FIRST_LEVEL_"//trim(fileName) 
     open(unit = iUnit, file = first_level_fileName, action = "write", status = "unknown")
-        print*, "START WRITING DATA TO FILE: ", TRIM(first_level_fileName)
+        !print*, "START WRITING DATA TO FILE: ", TRIM(first_level_fileName)
         ! START WRITING <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         write(iUnit,*       ) 'TITLE = "GRID"'
         write(iUnit,'(100a)') 'VARIABLES = "X","Y","RHO1_A1","RHO2_A2","U","V","P","A1"'
@@ -112,7 +112,7 @@ MODULE MODULE_OUTPUT
             write(iUnit, 10        ) (i-1)*4 + 1, (i-1)*4 + 2, (i-1)*4 + 3, (i-1)*4 + 4
         end do
         ! END FILE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        print*, "END WRITING TO FILE"
+        !print*, "END WRITING TO FILE"
     close(unit = iUnit)
     continue
     deallocate(temp_node)

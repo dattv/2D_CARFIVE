@@ -18,7 +18,7 @@ MODULE MODULE_EXSOLVER
     type(quadtree), dimension(first:last), intent(inout)    :: tree
     
     call loop_on_quadtree_array(first, last, tree, second_Ex_single)
-    
+    dt = zero
     call compute_dt_array(first, last, tree, dt)
     
     return

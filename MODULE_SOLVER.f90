@@ -213,17 +213,17 @@ MODULE MODULE_SOLVER
         time = time + dt
         
         if (mod(iter, frequency_dump) == 0) then 
-            output = "output"
+            output = "OUTPUT"
             write(temp_out, "(10i)") iter
             temp_out = adjustl(temp_out)
-            output = trim(temp_out)//output//".tec"
+            output = trim(temp_out)//"_"//trim(output)//".TEC"
             call output_2D(output, last, tree)
         end if
     end do
 
     return
-10  format(10x,"Density1    Density2    x_momentum  y_momentum  Pressure    A1")
-20  format("Time =",f20.13, "steps =", f20.13, 6f20.13)    
+10  format(47x,"Density1         Density2            x_momentum          y_momentum          Pressure                A1")
+20  format("Time =",f20.13, "steps =", i4, 6f20.13)    
     end subroutine solving    
 !==================================================================================================    
 END MODULE MODULE_SOLVER    
