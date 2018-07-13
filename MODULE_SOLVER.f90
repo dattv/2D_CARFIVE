@@ -103,6 +103,10 @@ MODULE MODULE_SOLVER
         this%C_solver_type = "IMEX"
         ptr => this%solver        
     else
+        print*, "program have not supported this solver yet"
+        print*, "Stop"
+        pause
+        stop
     end if
     
     return
