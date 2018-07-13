@@ -39,25 +39,25 @@ MODULE MODULE_SOLVER
     procedure, pass(this)   :: p_solver => first_EX_solver
     end type first_order_explicit_solver
     
-!    type, extends(abstract_solver)  :: second_order_explicit_solver
-!    contains
-!    procedure, pass(this)   :: p_solver => 2ST_EX_solver
-!    end type second_order_explicit_solver
-!    
-!    type, extends(abstract_solver)  :: runge_kutta_explicit_solver
-!    contains
-!    procedure, pass(this)   :: p_solver => RK_EX_solver
-!    end type runge_kutta_explicit_solver
-!    
-!    type, extends(abstract_solver)  :: second_order_implicit_solver
-!    contains
-!    procedure, pass(this)   :: p_solver => 2ST_IM_solver
-!    end type second_order_implicit_solver
-!    
-!    type, extends(abstract_solver)  :: implicit_Explicit_solver
-!    contains
-!    procedure, pass(this)   :: p_solver => IMEX_solver
-!    end type implicit_Explicit_solver
+    type, extends(abstract_solver)  :: second_order_explicit_solver
+    contains
+    procedure, pass(this)   :: p_solver => second_EX_solver
+    end type second_order_explicit_solver
+    
+    type, extends(abstract_solver)  :: runge_kutta_explicit_solver
+    contains
+    procedure, pass(this)   :: p_solver => RK_EX_solver
+    end type runge_kutta_explicit_solver
+    
+    type, extends(abstract_solver)  :: second_order_implicit_solver
+    contains
+    procedure, pass(this)   :: p_solver => second_IM_solver
+    end type second_order_implicit_solver
+    
+    type, extends(abstract_solver)  :: implicit_Explicit_solver
+    contains
+    procedure, pass(this)   :: p_solver => IMEX_solver
+    end type implicit_Explicit_solver
     
 !=========================== END OF FACTORY PATTERN ==========================    
     contains
@@ -71,11 +71,37 @@ MODULE MODULE_SOLVER
     if (I_solver_type == 1) then 
         ! ===> first order explicit type <===
         allocate(first_order_explicit_solver :: this%solver)
+        this%I_solver_type = 1
+        this%C_solver_type = "1st explicit"
+        ptr => this%solver
         
-    else if (I_solver_type == 2) then 
-    else if (I_solver_type == 3) then 
-    else if (I_solver_type == 4) then 
+    else if (I_solver_type == 2) then
+        ! ===> second order explicit type <===
+        allocate(second_order_explicit_solver :: this%solver)
+        this%I_solver_type = 2
+        this%C_solver_type = "2st explicit"
+        ptr => this%solver 
+        
+    else if (I_solver_type == 3) then
+        ! ===> runge kutta explicit type <===
+        allocate(runge_kutta_explicit_solver :: this%solver)
+        this%I_solver_type = 3
+        this%C_solver_type = "rk explicit"
+        ptr => this%solver 
+        
+    else if (I_solver_type == 4) then
+        ! ===> second order implicit type <===
+        allocate(second_order_implicit_solver :: this%solver)
+        this%I_solver_type = 4
+        this%C_solver_type = "2st Implicit"
+        ptr => this%solver 
+        
     else if (I_solver_type == 5) then
+        ! ===> implicit explicit type <===
+        allocate(implicit_Explicit_solver :: this%solver)
+        this%I_solver_type = 5
+        this%C_solver_type = "IMEX"
+        ptr => this%solver        
     else
     end if
     
@@ -88,10 +114,35 @@ MODULE MODULE_SOLVER
     
     return
     end subroutine first_EX_solver
-!==================================================================================================    
-!==================================================================================================    
-!==================================================================================================    
-!==================================================================================================    
+!==================================================================================================
+    subroutine second_EX_solver(this) 
+    implicit none
+    class(second_order_explicit_solver), intent(in)   :: this
+    
+    return
+    end subroutine second_EX_solver    
+!==================================================================================================
+    subroutine RK_EX_solver(this)
+    implicit none
+    class(runge_kutta_explicit_solver), intent(in)   :: this
+    
+    return
+    end subroutine RK_EX_solver 
+!================================================================================================== 
+    subroutine second_IM_solver(this)
+    implicit none
+    class(second_order_implicit_solver), intent(in)   :: this
+    
+    return
+    end subroutine second_IM_solver     
+!==================================================================================================
+    subroutine IMEX_solver(this)
+    implicit none
+    class(implicit_Explicit_solver), intent(in)   :: this
+    
+    return
+    end subroutine IMEX_solver
+    
 !==================================================================================================    
 !==================================================================================================    
 END MODULE MODULE_SOLVER    
