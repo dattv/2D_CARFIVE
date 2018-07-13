@@ -12,6 +12,7 @@ MODULE MODULE_SOLVER
     use MODULE_EXSOLVER
     use MODULE_CFDMAINDATA
     use MODULE_RESIDUAL
+    use MODULE_OUTPUT
     
 !================== DEGINS PATTERN ==================    
     
@@ -177,9 +178,11 @@ MODULE MODULE_SOLVER
     class(quadtree), dimension(first:last), intent(inout)   :: tree
     integer(ip), intent(in)                                 :: I_solver_type
     
-    integer(ip) :: i
+    integer(ip) :: i, iter
     logical     :: l_stop = .false.
     real(rp)    :: dt
+    real(rp), dimension(tree(first)%data%NQ,3)  :: res_norm
+    character(len = 100)                        :: output, temp_out
     
     type(solver_factory)            :: factory
     class(abstract_solver), pointer :: solver => null()
@@ -189,18 +192,36 @@ MODULE MODULE_SOLVER
     
     ! ===> call solver <===
     
-    time = zero
+    time = zero;    iter = 0
     do while (l_stop)
+        
+        iter = iter + 1
         
         call solver%p_solver(first, last, tree, dt)
         
-        time = time + dt
+        call residual_norm(first, last, tree, res_norm)
+        
+        if (iter == 1) write(*, 10)
+        if (mod(iter, frequency_dump) == 0) then 
+            write(*, 20)    time, iter, res_norm(:,1)
+        end if
         
         if (time >= t_final) l_stop = .true.
+        time = time + dt
+        
+        if (mod(iter, frequency_dump) == 0) then 
+            output = "output"
+            write(temp_out, "(10i)") iter
+            temp_out = adjustl(temp_out)
+            output = trim(temp_out)//output//".tec"
+            call output_2D(output, last, tree)
+        end if
     end do
     
     
     return
+10  format(10x,"Density1    Density2    x_momentum  y_momentum  Pressure    A1")
+20  format("Time =",f20.13, "steps =", f20.13, 6f20.13)    
     end subroutine solving    
 !==================================================================================================    
 END MODULE MODULE_SOLVER    
