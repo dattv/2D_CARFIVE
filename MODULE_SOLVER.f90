@@ -138,7 +138,10 @@ MODULE MODULE_SOLVER
     type(quadtree), dimension(first:last), intent(inout)    :: tree
     real(rp), intent(out)                                   :: dt
     
-        
+    ! ===> this function will re-direct to another module,
+    ! ===> i made it to reduce this file's size
+    call second_EX(first, last, tree, dt)   
+    
     return
     end subroutine second_EX_solver    
 !==================================================================================================
@@ -217,8 +220,7 @@ MODULE MODULE_SOLVER
             call output_2D(output, last, tree)
         end if
     end do
-    
-    
+
     return
 10  format(10x,"Density1    Density2    x_momentum  y_momentum  Pressure    A1")
 20  format("Time =",f20.13, "steps =", f20.13, 6f20.13)    
