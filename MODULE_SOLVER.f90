@@ -128,6 +128,7 @@ MODULE MODULE_SOLVER
     type(quadtree), dimension(first:last), intent(inout)    :: tree
     real(rp), intent(out)                                   :: dt
     
+    dt = zero
     return
     end subroutine first_EX_solver
 !==================================================================================================
@@ -152,6 +153,7 @@ MODULE MODULE_SOLVER
     type(quadtree), dimension(first:last), intent(inout)    :: tree
     real(rp), intent(out)                                   :: dt
     
+    dt = zero
     return
     end subroutine RK_EX_solver 
 !================================================================================================== 
@@ -162,6 +164,7 @@ MODULE MODULE_SOLVER
     type(quadtree), dimension(first:last), intent(inout)    :: tree
     real(rp), intent(out)                                   :: dt
     
+    dt = zero
     return
     end subroutine second_IM_solver     
 !==================================================================================================
@@ -172,6 +175,7 @@ MODULE MODULE_SOLVER
     type(quadtree), dimension(first:last), intent(inout)    :: tree
     real(rp), intent(out)                                   :: dt
     
+    dt = zero
     return
     end subroutine IMEX_solver
 !================================================================================================== 

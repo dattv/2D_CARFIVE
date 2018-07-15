@@ -240,86 +240,74 @@ MODULE MODULE_MUSCL
 !> create limiter
     limiter => factory%create_limiter(limite)
     
-    ! X_component
-    do j = 1, ny
-        do i = 2, nx-1
-            dupw = w(i  ,j,iVal) - w(i-1,j,iVal)
-            dloc = w(i+1,j,iVal) - w(i  ,j,iVal)
-            
-            if(abs(dupw).le.tollim) dupw = tollim*sign(one,dupw)
-            if(abs(dloc).le.tollim) dloc = tollim*sign(one,dloc)
-            
-            !delta = half*(one + omega)*dupw + half*(one - omega)*dloc      !(old version muscle center low accuracy, dont use any more)
-
-                ratio = dupw/dloc
-            ratio_inv = one/ratio
-            
-            ! Slope limiters used are:
-            ! 
-            ! LIMITE = 1, Godunov's first order upwind method           ( both are fird order, need tobe checked, not important, we don't use it any more)
-            ! LIMITE = 2, upwind second order method (non-monotone)     ( both are fird order, need tobe checked, not important, we don't use it any more)
-            ! LIMITE = 3, upwind TVD, with SUPERBEE type limiter        (old superbee riemann solver book)
-            ! LIMITE = 4, upwind TVD, with VAN LEER type limiter        (             riemann solver book)
-            ! LIMITE = 5, upwind TVD, with VAN ALBADA type limiter      (             riemann solver book)
-            ! LIMITE = 6, upwind TVD, with MINMOD type limiter  >>>>> NOT WORK ANY MORE <<<<<
-            ! LIMITE = 7, upwind TVD, with MINMAX type limiter  >>>>> NOT WORK ANY MORE <<<<<
-            ! LIMITE = 6, new superbee (high accuracy source: https://en.wikipedia.org/wiki/Flux_limiter)
-            call limiter%l_funcs(ratio, omega, delta )    
-            delta_inv = delta/ratio
-            
-            muscl_recons(i,j,ival)%x_l = w(i,j,ival) - fourth*((one + omega)*delta_inv*dupw + (one - omega)*delta*dloc)
-            muscl_recons(i,j,ival)%x_r = w(i,j,ival) + fourth*((one - omega)*delta_inv*dupw + (one + omega)*delta*dloc)
-
-!            print*, fourth*((one + omega)*delta_inv*dupw + (one - omega)*delta*dloc)
-!            print*, fourth*((one - omega)*delta_inv*dupw + (one + omega)*delta*dloc)
-!            continue
-        end do
-    end do
-
-    ! y_component
-    do j = 2, ny-1
-        do i = 1, nx
-            dupw = w(i,j  ,iVal) - w(i,j-1,iVal)
-            dloc = w(i,j+1,iVal) - w(i,j  ,iVal)
-            
-            if(abs(dupw).le.tollim)dupw=tollim*sign(one,dupw)
-            if(abs(dloc).le.tollim)dloc=tollim*sign(one,dloc)
-            
-            !delta = half*(one + omega)*dupw + half*(one - omega)*dloc
-
-                ratio = dupw/dloc
-            ratio_inv = one/ratio
-            
-            ! Slope limiters used are:
-            ! 
-            ! LIMITE = 1, Godunov's first order upwind method
-            ! LIMITE = 2, upwind second order method (non-monotone)
-            ! LIMITE = 3, upwind TVD, with SUPERBEE type limiter
-            ! LIMITE = 4, upwind TVD, with VAN LEER type limiter
-            ! LIMITE = 5, upwind TVD, with VAN ALBADA type limiter
-            ! LIMITE = 6, upwind TVD, with MINMOD type limiter
-            ! LIMITE = 7, upwind TVD, with MINMAX type limiter
-            call limiter%l_funcs(ratio, omega, delta )    ; delta_inv = delta/ratio
-
-            muscl_recons(i,j,ival)%y_l = w(i,j,ival) - fourth*((one + omega)*delta_inv*dupw + (one - omega)*delta*dloc)
-            muscl_recons(i,j,ival)%y_r = w(i,j,ival) + fourth*((one - omega)*delta_inv*dupw + (one + omega)*delta*dloc)
-            
-!            print*, fourth*((one + omega)*delta_inv*dupw + (one - omega)*delta*dloc)
-!            print*, fourth*((one - omega)*delta_inv*dupw + (one + omega)*delta*dloc)
-!            continue
-        end do
-    end do
-    
-     muscl_recons(1,:,:) = muscl_recons(2,:,:)
-    muscl_recons(nx,:,:) = muscl_recons(nx-1,:,:)
-     muscl_recons(:,1,:) = muscl_recons(:,2,:)
-    muscl_recons(:,ny,:) = muscl_recons(:,ny-1,:)
-!    do i = 1, nx
-!        do j = 1, ny
-!            print*, muscl_recons(i,j,ival)
-!            continue
+!    ! X_component
+!    do j = 1, ny
+!        do i = 2, nx-1
+!            dupw = w(i  ,j,iVal) - w(i-1,j,iVal)
+!            dloc = w(i+1,j,iVal) - w(i  ,j,iVal)
+!            
+!            if(abs(dupw).le.tollim) dupw = tollim*sign(one,dupw)
+!            if(abs(dloc).le.tollim) dloc = tollim*sign(one,dloc)
+!            
+!            !delta = half*(one + omega)*dupw + half*(one - omega)*dloc      !(old version muscle center low accuracy, dont use any more)
+!
+!                ratio = dupw/dloc
+!            ratio_inv = one/ratio
+!            
+!            ! Slope limiters used are:
+!            ! 
+!            ! LIMITE = 1, Godunov's first order upwind method           ( both are fird order, need tobe checked, not important, we don't use it any more)
+!            ! LIMITE = 2, upwind second order method (non-monotone)     ( both are fird order, need tobe checked, not important, we don't use it any more)
+!            ! LIMITE = 3, upwind TVD, with SUPERBEE type limiter        (old superbee riemann solver book)
+!            ! LIMITE = 4, upwind TVD, with VAN LEER type limiter        (             riemann solver book)
+!            ! LIMITE = 5, upwind TVD, with VAN ALBADA type limiter      (             riemann solver book)
+!            ! LIMITE = 6, upwind TVD, with MINMOD type limiter  >>>>> NOT WORK ANY MORE <<<<<
+!            ! LIMITE = 7, upwind TVD, with MINMAX type limiter  >>>>> NOT WORK ANY MORE <<<<<
+!            ! LIMITE = 6, new superbee (high accuracy source: https://en.wikipedia.org/wiki/Flux_limiter)
+!            call limiter%l_funcs(ratio, omega, delta )    
+!            delta_inv = delta/ratio
+!            
+!            muscl_recons(i,j,ival)%x_l = w(i,j,ival) - fourth*((one + omega)*delta_inv*dupw + (one - omega)*delta*dloc)
+!            muscl_recons(i,j,ival)%x_r = w(i,j,ival) + fourth*((one - omega)*delta_inv*dupw + (one + omega)*delta*dloc)
+!
 !        end do
 !    end do
+
+    ! y_component
+!    do j = 2, ny-1
+!        do i = 1, nx
+!            dupw = w(i,j  ,iVal) - w(i,j-1,iVal)
+!            dloc = w(i,j+1,iVal) - w(i,j  ,iVal)
+!            
+!            if(abs(dupw).le.tollim)dupw=tollim*sign(one,dupw)
+!            if(abs(dloc).le.tollim)dloc=tollim*sign(one,dloc)
+!            
+!            !delta = half*(one + omega)*dupw + half*(one - omega)*dloc
+!
+!                ratio = dupw/dloc
+!            ratio_inv = one/ratio
+!            
+!            ! Slope limiters used are:
+!            ! 
+!            ! LIMITE = 1, Godunov's first order upwind method
+!            ! LIMITE = 2, upwind second order method (non-monotone)
+!            ! LIMITE = 3, upwind TVD, with SUPERBEE type limiter
+!            ! LIMITE = 4, upwind TVD, with VAN LEER type limiter
+!            ! LIMITE = 5, upwind TVD, with VAN ALBADA type limiter
+!            ! LIMITE = 6, upwind TVD, with MINMOD type limiter
+!            ! LIMITE = 7, upwind TVD, with MINMAX type limiter
+!            call limiter%l_funcs(ratio, omega, delta )    ; delta_inv = delta/ratio
+!
+!            muscl_recons(i,j,ival)%y_l = w(i,j,ival) - fourth*((one + omega)*delta_inv*dupw + (one - omega)*delta*dloc)
+!            muscl_recons(i,j,ival)%y_r = w(i,j,ival) + fourth*((one - omega)*delta_inv*dupw + (one + omega)*delta*dloc)
+            
+!        end do
+!    end do
+    
+!     muscl_recons(1,:,:) = muscl_recons(2,:,:)
+!    muscl_recons(nx,:,:) = muscl_recons(nx-1,:,:)
+!     muscl_recons(:,1,:) = muscl_recons(:,2,:)
+!    muscl_recons(:,ny,:) = muscl_recons(:,ny-1,:)
     
 !> delete limiter    
     deallocate(factory%limiter)
@@ -348,11 +336,7 @@ MODULE MODULE_MUSCL
          phi   = min(phir, r)
          phi   = min(phi, two)
       endif
-      !phi = dmax1(zero, dmin1(two*r, one), dmin1(r, two))
-!      phi = min(r,2.d0)
-!      denor = min(2.d0*r,1.d0)
-!      phi = max(phi, denor)
-!      phi = max(phi,0.d0)
+
 !
       delta = phi!*delta
 !
@@ -372,22 +356,9 @@ MODULE MODULE_MUSCL
 !
       real(rp)  delta, denor, omega, phi, phir, r
 !
-      phi             = zero
-      !if(r.ge.zero)phi = two*r
-      !if(r.ge.half)phi = one
-!     !
-      !if(r.ge.one)then
-      !   denor = one - omega + (one + omega)*r
-      !   phir  = two/denor
-      !   phi   = min(phir, r)
-      !   phi   = min(phi, two)
-      !endif
-      phi = dmax1(zero, dmin1(two*r, one), dmin1(r, two))
-!      phi = min(r,2.d0)
-!      denor = min(2.d0*r,1.d0)
-!      phi = max(phi, denor)
-!      phi = max(phi,0.d0)
-!
+        phi = zero
+        
+        phi = max(zero, min(two*r, one), min(r, two))
       delta = phi
 !
       end
