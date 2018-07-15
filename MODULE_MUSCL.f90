@@ -2,6 +2,8 @@ MODULE MODULE_MUSCL
     
     use MODULE_PRECISION
     use MODULE_CONSTANTS
+    use MODULE_GENERICMETHOD
+    use MODULE_QUADTREE
     
 !=========================== FACTORY PATTERN ===========================
     type, abstract  ::  limiter_funcs
@@ -58,7 +60,10 @@ MODULE MODULE_MUSCL
     contains
     procedure, pass(this)   :: l_funcs => Upwind_TVD_super_bee_limiter_funcs
     end type Upwind_TVD_super_bee         
-!======================== END FACTORY PATTERN ==========================    
+!======================== END FACTORY PATTERN ==========================  
+    
+
+
     contains
 !==================================================================================================    
     function create_limiter(this, LIMITE) result(ptr)
@@ -218,11 +223,14 @@ MODULE MODULE_MUSCL
 !
     end subroutine Upwind_TVD_super_bee_limiter_funcs    
 !==================================================================================================    
-    subroutine muscle(iVal, limite)
+    subroutine muscle(iVal, limite, first, last, tree)
     implicit none
-    type (limiter_funcs_factory)   :: factory
-    class (limiter_funcs), pointer  :: limiter => null()
-    integer(ip), intent(in) :: iVal, limite
+
+    integer(ip), intent(in)                                 :: iVal, limite
+    integer(ip), intent(in)                                 :: first, last
+    type(quadtree), dimension(first:last), intent(inout)    :: tree
+    type (limiter_funcs_factory)                            :: factory
+    class (limiter_funcs), pointer                          :: limiter => null()    
     real(rp)    :: dupw, dloc
     integer(ip) :: i, j, k
     
@@ -233,9 +241,10 @@ MODULE MODULE_MUSCL
     real(rp)    :: ratio_inv, delta_inv
     
 !> create limiter
+
     limiter => factory%create_limiter(limite)
     
-    
+    call loop_on_quadtree_array(first, last,  tree, MUSCL_single)
 !    ! X_component
 !    do j = 1, ny
 !        do i = 2, nx-1
@@ -308,8 +317,22 @@ MODULE MODULE_MUSCL
 !> delete limiter    
     deallocate(factory%limiter)
     return
+    contains
+
+    subroutine  MUSCL_single(tree)
+    implicit none
+    type(quadtree), pointer, intent(inout)  :: tree
+    
+    
+    
+    
+    return
+    end subroutine MUSCL_single
+    
     end subroutine muscle
     
+!==================================================================================================
+
 !==================================================================================================
 !
       subroutine sbslic(r, omega, delta)

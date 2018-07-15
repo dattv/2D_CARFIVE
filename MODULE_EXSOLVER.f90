@@ -22,12 +22,12 @@ MODULE MODULE_EXSOLVER
     
     
     ! ===> muscl reconstruction
-    call muscle(int(one  ),  I_limiter_type)
-    call muscle(int(two  ),  I_limiter_type)
-    call muscle(int(three),  I_limiter_type)
-    call muscle(int(four ),  I_limiter_type)
-    call muscle(int(five ),  I_limiter_type)
-    call muscle(int(six  ),  I_limiter_type)
+    call muscle(int(one  ),  I_limiter_type, first, last, tree)
+    call muscle(int(two  ),  I_limiter_type, first, last, tree)
+    call muscle(int(three),  I_limiter_type, first, last, tree)
+    call muscle(int(four ),  I_limiter_type, first, last, tree)
+    call muscle(int(five ),  I_limiter_type, first, last, tree)
+    call muscle(int(six  ),  I_limiter_type, first, last, tree)
     
     ! ===> compute rhs
     call loop_on_quadtree_array(first, last, tree, compute_RHS)
