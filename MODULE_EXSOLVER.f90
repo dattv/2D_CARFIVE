@@ -5,6 +5,9 @@ MODULE MODULE_EXSOLVER
     use MODULE_QUADTREE
     use MODULE_GENERICMETHOD
     use MODULE_TIMESOLVER
+    use MODULE_MUSCL
+    use MODULE_CFDMAINDATA
+    use MODULE_RHS
     
     private
     public  :: second_EX
@@ -17,8 +20,22 @@ MODULE MODULE_EXSOLVER
     real(rp), intent(inout) :: dt
     type(quadtree), dimension(first:last), intent(inout)    :: tree
     
-    call loop_on_quadtree_array(first, last, tree, second_Ex_single)
-    dt = zero
+    
+    ! ===> muscl reconstruction
+    call muscle(int(one  ),  I_limiter_type)
+    call muscle(int(two  ),  I_limiter_type)
+    call muscle(int(three),  I_limiter_type)
+    call muscle(int(four ),  I_limiter_type)
+    call muscle(int(five ),  I_limiter_type)
+    call muscle(int(six  ),  I_limiter_type)
+    
+    ! ===> compute rhs
+    call loop_on_quadtree_array(first, last, tree, compute_RHS)
+    
+    ! ==> update conservative variables
+    call  loop_on_quadtree_array(first, last, tree, second_Ex_single)
+    
+    ! ===> update time
     call compute_dt_array(first, last, tree, dt)
     
     return

@@ -198,24 +198,28 @@ MODULE MODULE_SOLVER
     solver => factory%create_solver(I_solver_type)
     
     ! ===> call solver <===
-    
     time = zero;    iter = 0
     do while (.not. l_stop)
         
         iter = iter + 1
         
+        ! ===> call solver
         call solver%p_solver(first, last, tree, dt)
         
+        ! ===> compute residual at each step
         call residual_norm(first, last, tree, res_norm)
         
+        ! ===> print out residual each step
         if (iter == 1) write(*, 10)
         if (mod(iter, frequency_dump) == 0) then 
             write(*, 20)    time, iter, res_norm(:,1)
         end if
         
+        ! ===> check time stop
         if (time >= t_final) l_stop = .true.
         time = time + dt
         
+        ! ===> print out result to data file
         if (mod(iter, frequency_dump) == 0) then 
             output = "OUTPUT"
             write(temp_out, "(10i)") iter
@@ -223,6 +227,7 @@ MODULE MODULE_SOLVER
             output = trim(temp_out)//"_"//trim(output)//".TEC"
             call output_2D(output, last, tree)
         end if
+        
     end do
 
     return

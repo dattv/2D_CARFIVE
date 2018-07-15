@@ -85,7 +85,6 @@
     call solving(1, nelm, tree, I_solver_type)
     
     continue
-    print *, 'Hello World'
 
     end program $2D_CARFILE
 

@@ -60,6 +60,7 @@ MODULE MODULE_MUSCL
     end type Upwind_TVD_super_bee         
 !======================== END FACTORY PATTERN ==========================    
     contains
+!==================================================================================================    
     function create_limiter(this, LIMITE) result(ptr)
     implicit none
     class(limiter_funcs_factory)    :: this
@@ -106,7 +107,7 @@ MODULE MODULE_MUSCL
 
     return
     end function create_limiter
-!================    
+!================================================================================================== 
     subroutine Godunov_first_order_upwind_limiter_funcs(this, ratio, omega, delta )
     class(Godunov_first_order_upwind), intent(in)   :: this
     real(rp), intent(in)    :: ratio, omega
@@ -115,7 +116,7 @@ MODULE MODULE_MUSCL
     delta = zero
     return
     end subroutine Godunov_first_order_upwind_limiter_funcs
-!================    
+!==================================================================================================  
     subroutine Upwind_second_order_limiter_funcs(this, ratio, omega, delta )
     class(Upwind_second_order), intent(in)   :: this
     real(rp), intent(in)    :: ratio, omega
@@ -124,7 +125,7 @@ MODULE MODULE_MUSCL
     delta = zero
     return
     end subroutine Upwind_second_order_limiter_funcs    
-!================
+!==================================================================================================
     subroutine Upwind_TVD_super_bee01_limiter_funcs(this, ratio, omega, delta )
     class(Upwind_TVD_super_bee01), intent(in)   :: this
     real(rp), intent(in)    :: ratio, omega
@@ -142,16 +143,11 @@ MODULE MODULE_MUSCL
          phi   = min(phir, ratio)
          phi   = min(phi, two)
       endif
-      !phi = dmax1(zero, dmin1(two*r, one), dmin1(r, two))
-!      phi = min(r,2.d0)
-!      denor = min(2.d0*r,1.d0)
-!      phi = max(phi, denor)
-!      phi = max(phi,0.d0)
 !
       delta = phi!*delta
     return
     end subroutine Upwind_TVD_super_bee01_limiter_funcs       
-!================
+!==================================================================================================
     subroutine Upwind_TVD_VAN_LEER_limiter_funcs(this, ratio, omega, delta)
 !   
 !   purpose: to compute a van leer type slope limiter delta
@@ -177,7 +173,7 @@ MODULE MODULE_MUSCL
     delta    = phi!*delta
 !   
     end subroutine Upwind_TVD_VAN_LEER_limiter_funcs  
-!================
+!==================================================================================================
     subroutine Upwind_TVD_VAN_ALBADA_limiter_funcs(this, ratio, omega, delta)
 !
 !   purpose: to compute a van albada type slope limiter delta
@@ -203,7 +199,7 @@ MODULE MODULE_MUSCL
     delta    = phi!*delta
 !
     end subroutine Upwind_TVD_VAN_ALBADA_limiter_funcs
-!================
+!==================================================================================================
     subroutine Upwind_TVD_super_bee_limiter_funcs(this, ratio, omega, delta)
 !
 !   purpose: to compute a superbee type slope limiter delta
@@ -221,8 +217,7 @@ MODULE MODULE_MUSCL
     delta = phi
 !
     end subroutine Upwind_TVD_super_bee_limiter_funcs    
-!================
-!================    
+!==================================================================================================    
     subroutine muscle(iVal, limite)
     implicit none
     type (limiter_funcs_factory)   :: factory
@@ -239,6 +234,7 @@ MODULE MODULE_MUSCL
     
 !> create limiter
     limiter => factory%create_limiter(limite)
+    
     
 !    ! X_component
 !    do j = 1, ny
@@ -314,7 +310,7 @@ MODULE MODULE_MUSCL
     return
     end subroutine muscle
     
-!----------------------------------------------------------------------*
+!==================================================================================================
 !
       subroutine sbslic(r, omega, delta)
 !
@@ -342,9 +338,7 @@ MODULE MODULE_MUSCL
 !
       end
 !
-!----------------------------------------------------------------------*
-    
-!----------------------------------------------------------------------*
+!==================================================================================================
 !
       subroutine superbee(r, omega, delta)
 !
@@ -363,7 +357,7 @@ MODULE MODULE_MUSCL
 !
       end
 !
-!----------------------------------------------------------------------*      
+!==================================================================================================     
       
 !
       subroutine vlslic(r, omega, delta)
@@ -389,7 +383,7 @@ MODULE MODULE_MUSCL
 !
       end
 !
-!----------------------------------------------------------------------*
+!==================================================================================================
 !
       subroutine vaslic(r, omega, delta)
 !
@@ -414,7 +408,7 @@ MODULE MODULE_MUSCL
 !
       end
 !
-!----------------------------------------------------------------------*
+!==================================================================================================
 !
       subroutine mislic(r, omega, delta)
 !
@@ -439,7 +433,7 @@ MODULE MODULE_MUSCL
 !
       end
 !
-!----------------------------------------------------------------------*
+!==================================================================================================
 !
       subroutine minmax(dupw, dloc, delta)
 !
@@ -460,5 +454,5 @@ MODULE MODULE_MUSCL
 !
       end
 !
-!----------------------------------------------------------------------*  
+!================================================================================================== 
 END MODULE MODULE_MUSCL
