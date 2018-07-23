@@ -1,3 +1,10 @@
+!=================================================================================================
+!> CARTESIAN ADAPTIVE FIVE EQUATION MODEL
+!> AUTHOR: VAN-DAT THANG
+!> E-MAIL: datthangva@gmail.com
+!> E-MAIL: vandatthang@gmail.com
+!> SOURCE CODE LINK: https://github.com/dattv/2D_CARFIVE
+!================================================================================================= 
 MODULE MODULE_CFDUTILITY
     
     use MODULE_PRECISION
