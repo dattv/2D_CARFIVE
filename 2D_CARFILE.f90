@@ -81,7 +81,7 @@
     ! ===> PRINT OUT INITIAL CONDITION <===========================================================
     call output_2D("INITIAL.TEC", nelm, tree)
     
-    I_solver_type = 2                                                       ! second order explicit
+    I_solver_type = 2   ! second order explicit
     call solving(1, nelm, tree, I_solver_type)
     
 
