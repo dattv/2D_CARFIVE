@@ -322,9 +322,24 @@ MODULE MODULE_MUSCL
     subroutine  MUSCL_single(tree)
     implicit none
     type(quadtree), pointer, intent(inout)  :: tree
+    real(rp)                                :: delta
+    
+    type(quadtree), pointer                 :: curr_C, adj_c
+    real(rp), dimension(2)                  :: dr
+
+    curr_c => tree
+     adj_c => tree%adj_north
+    
+    delta = adj_c%data%w(iVal) - curr_c%data%w(iVal)
+    
+    dr = half*(curr_c%pts(1)%coord(:) + curr_c%pts(2)%coord(:)) - curr_c%pts(5)%coord(:)
     
     
+    ! ===> compute limiter funcs 
+    !call limiter%l_funcs(ratio, omega, delta)
     
+    ! ===> compute muscl reconstruction
+    tree%data%recons(iVal)%x_r = tree%data%w(iVal) + half*delta
     
     return
     end subroutine MUSCL_single
