@@ -204,7 +204,7 @@ MODULE MODULE_MUSCL
         adj_c => tree
     end if
     
-    call muscl_single_edge(curr_c, adj_c)
+    call muscl_single_edge(curr_c, adj_c, 1)
     
     ! ===> east cell <=============================================================================
     if ( associated(tree%adj_east))  then 
@@ -213,7 +213,7 @@ MODULE MODULE_MUSCL
         adj_c => tree
     end if
     
-    call muscl_single_edge(curr_c, adj_c)
+    call muscl_single_edge(curr_c, adj_c, 2)
     
     ! ===> south <=================================================================================
     if ( associated(tree%adj_south))  then 
@@ -222,7 +222,7 @@ MODULE MODULE_MUSCL
         adj_c => tree
     end if
     
-    call muscl_single_edge(curr_c, adj_c)   
+    call muscl_single_edge(curr_c, adj_c, 3)   
     
     ! ===> west <==================================================================================
     if ( associated(tree%adj_west))  then 
@@ -231,14 +231,15 @@ MODULE MODULE_MUSCL
         adj_c => tree
     end if
     
-    call muscl_single_edge(curr_c, adj_c)   
+    call muscl_single_edge(curr_c, adj_c, 4)   
     
     return
     end subroutine MUSCL_single
     
-    subroutine muscl_single_edge(curr_c, adj_c)
+    subroutine muscl_single_edge(curr_c, adj_c, id)
     implicit none
     type(quadtree), intent(inout)   :: curr_c, adj_c
+    integer(ip), intent(in)         :: id
     
     real(rp), dimension(2)          :: dr, w_curr
     real(rp)                        :: delta, temp
@@ -253,7 +254,7 @@ MODULE MODULE_MUSCL
     call limiter%l_funcs(two*dot_product(w_curr,dr) - delta, delta, omega, temp)
     
     ! ===> compute muscl reconstruction <==========================================================
-    curr_c%data%recons(iVal)%x_r = curr_c%data%w(iVal) + half*temp
+    curr_c%data%recons(iVal)%x_r(id) = curr_c%data%w(iVal) + half*temp
     
     end subroutine muscl_single_edge
     
