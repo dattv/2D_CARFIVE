@@ -17,16 +17,35 @@ MODULE MODULE_CFDUTILITY
     implicit none
     
     integer(ip), intent(in)             :: ival
-    type(quadtree), intent(in)          :: tree
+    type(quadtree), intent(in), target  :: tree
     real(rp), dimension(2), intent(out) :: w
     type(quadtree), pointer             :: cell_n, cell_s, cell_e, cell_w
     real(rp), dimension(2,2)            :: A
     real(rp), dimension(2)              :: B
     
-    cell_n => tree%adj_north
-    cell_e => tree%adj_east
-    cell_s => tree%adj_south
-    cell_w => tree%adj_west
+    if (associated(tree%adj_north)) then 
+        cell_n => tree%adj_north
+    else
+        cell_n => tree
+    end if
+    
+    if (associated(tree%adj_east)) then 
+        cell_e => tree%adj_east
+    else  
+        cell_e => tree
+    end if
+    
+    if (associated(tree%adj_south)) then 
+        cell_s => tree%adj_south
+    else
+        cell_S => tree
+    end if
+    
+    if (associated(tree%adj_west)) then 
+        cell_w => tree%adj_west
+    else
+        cell_w => tree
+    end if
     
     A(1,1) = compute_component(compute_alpha(cell_n%pts(5)%coord(1), tree%pts(5)%coord(1), cell_n%pts(5)%coord(2), tree%pts(5)%coord(2))**2, cell_n%pts(5)%coord(1) - tree%pts(5)%coord(1), cell_n%pts(5)%coord(1) - tree%pts(5)%coord(1)) + &
              compute_component(compute_alpha(cell_e%pts(5)%coord(1), tree%pts(5)%coord(1), cell_e%pts(5)%coord(2), tree%pts(5)%coord(2))**2, cell_e%pts(5)%coord(1) - tree%pts(5)%coord(1), cell_e%pts(5)%coord(1) - tree%pts(5)%coord(1)) + &
@@ -75,8 +94,12 @@ MODULE MODULE_CFDUTILITY
     real(rp), intent(in)    :: xi, xc, yi, yc
     real(rp)                :: res
     
-    
-    res = one/(sqrt(xi-xc)**2 + (yi-yc)**2)
+    res= (sqrt(xi-xc)**2 + (yi-yc)**2)
+    if (res /= zero) then 
+        res = one/res
+    else
+        res = zero
+    end if
     return
     end function compute_alpha
 END MODULE MODULE_CFDUTILITY    
