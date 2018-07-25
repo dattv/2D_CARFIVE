@@ -34,9 +34,9 @@
     implicit none
 
     ! Variables
-    integer(ip) :: NQ
-    integer(ip) :: nelm
-    integer(ip) :: I_solver_type
+    integer(ip)                                 :: NQ
+    integer(ip)                                 :: nelm
+    integer(ip)                                 :: I_solver_type
     type(quadtree), dimension(:), allocatable   :: tree
     ! Body of $2D_CARFILE
     
@@ -46,7 +46,7 @@
     t_final = 0.2_rp;   CFL = 0.7_rp
     
     C_limiter_type = "superbee" ;   C_inviscid_flux = "rusanov"
-    I_limiter_type = 6          ;   I_inviscid_flux = 1
+    I_limiter_type = 1          ;   I_inviscid_flux = 1
     
     ! ===> MAKE QUADTREE GRID NELM CELL <==========================================================
     call make_grid_2d(nelm, (/zero, one/), (/zero, one/), NQ, tree)

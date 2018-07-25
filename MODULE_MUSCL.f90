@@ -11,6 +11,7 @@ MODULE MODULE_MUSCL
     use MODULE_CONSTANTS
     use MODULE_GENERICMETHOD
     use MODULE_QUADTREE
+    use MODULE_CFDUTILITY
     
 !=========================== FACTORY PATTERN ===========================
     type, abstract  ::  limiter_funcs
@@ -19,58 +20,31 @@ MODULE MODULE_MUSCL
     end type limiteR_funcs        
     
     abstract interface
-        subroutine generic_funcs(this, ratio, omega, delta)
+        subroutine generic_funcs(this, a, b, omega, delta)
         use MODULE_PRECISION        
         import  :: limiter_funcs
         class(limiter_funcs), intent(in)    :: this
-        real(rp), intent(in)                :: ratio, omega
+        real(rp), intent(in)                :: a, b, omega
         real(rp), intent(out)               :: delta
         end subroutine generic_funcs
     end interface
     
     type :: limiter_funcs_factory
     	private
-        character(len = 20) :: limiter_type
+        character(len = 20)             :: limiter_type
         class(limiter_funcs), pointer   :: limiter
     contains
     
     procedure   :: create_limiter
     
-    end type limiter_funcs_factory
+    end type limiter_funcs_factory   
     
-    type, extends(limiter_funcs)    :: Godunov_first_order_upwind
+    type, extends(limiter_funcs)    :: UST_super_bee
     contains
-    procedure, pass(this)   :: l_funcs => Godunov_first_order_upwind_limiter_funcs
-    end type Godunov_first_order_upwind
-    
-    type, extends(limiter_funcs)    :: Upwind_second_order
-    contains
-    procedure, pass(this)   :: l_funcs => Upwind_second_order_limiter_funcs
-    end type Upwind_second_order  
-    
-    type, extends(limiter_funcs)    :: Upwind_TVD_super_bee01
-    contains
-    procedure, pass(this)   :: l_funcs => Upwind_TVD_super_bee01_limiter_funcs
-    end type Upwind_TVD_super_bee01 
-    
-    type, extends(limiter_funcs)    :: Upwind_TVD_VAN_LEER
-    contains
-    procedure, pass(this)   :: l_funcs => Upwind_TVD_VAN_LEER_limiter_funcs
-    end type Upwind_TVD_VAN_LEER  
-    
-    type, extends(limiter_funcs)    :: Upwind_TVD_VAN_ALBADA
-    contains
-    procedure, pass(this)   :: l_funcs => Upwind_TVD_VAN_ALBADA_limiter_funcs
-    end type Upwind_TVD_VAN_ALBADA    
-    
-    type, extends(limiter_funcs)    :: Upwind_TVD_super_bee
-    contains
-    procedure, pass(this)   :: l_funcs => Upwind_TVD_super_bee_limiter_funcs
-    end type Upwind_TVD_super_bee         
+    procedure, pass(this)   :: l_funcs => UST_super_bee_limiter_funcs
+    end type UST_super_bee     
 !======================== END FACTORY PATTERN ==========================  
     
-
-
     contains
 !==================================================================================================    
     function create_limiter(this, LIMITE) result(ptr)
@@ -81,35 +55,9 @@ MODULE MODULE_MUSCL
     
     if (LIMITE == 1) then 
         ! LIMITE = 1, Godunov's first order upwind method
-        allocate(Godunov_first_order_upwind :: this%limiter)
-        this%limiter_type = "first order upwind method"
+        allocate(UST_super_bee :: this%limiter)
+        this%limiter_type = "super bee"
         ptr => this%limiter
-        
-    else if (LIMITE == 2) then 
-        ! LIMITE = 2, upwind second order method (non-monotone)
-        allocate(Upwind_second_order :: this%limiter)
-        ptr => this%limiter
-        this%limiter_type = "second order upwind method"
-    else if (LIMITE == 3) then 
-        ! LIMITE = 3, upwind TVD, with SUPERBEE type limiter (old - reimann solver book (toro))
-        allocate(Upwind_TVD_super_bee01 :: this%limiter)
-        ptr => this%limiter
-        this%limiter_type = "SUPERBEE type limiter old"
-    else if (LIMITE == 4) then 
-        ! LIMITE = 4, upwind TVD, with VAN LEER type limiter
-        allocate(Upwind_TVD_VAN_LEER :: this%limiter)
-        ptr => this%limiter
-        this%limiter_type = "VAN LEER type limiter"
-    else if (LIMITE == 5) then 
-        ! LIMITE = 5, upwind TVD, with VAN ALBADA type limiter
-        allocate(Upwind_TVD_VAN_ALBADA :: this%limiter)
-        ptr => this%limiter
-        this%limiter_type = "VAN ALBADA type limiter"
-    else if (LIMITE == 6) then 
-        ! LIMITE = 6, upwind TVD, with superbee type limiter (new - version, higher accuracy than old one )
-        allocate(Upwind_TVD_super_bee :: this%limiter)
-        ptr => this%limiter
-        this%limiter_type = "superbee type limiter"
     else 
         write(*, *), "The program have not supported this limiter yet"
         write(*, *), "Stop."
@@ -119,100 +67,8 @@ MODULE MODULE_MUSCL
 
     return
     end function create_limiter
-!================================================================================================== 
-    subroutine Godunov_first_order_upwind_limiter_funcs(this, ratio, omega, delta )
-    class(Godunov_first_order_upwind), intent(in)   :: this
-    real(rp), intent(in)    :: ratio, omega
-    real(rp), intent(out)   :: delta
-    
-    delta = zero
-    return
-    end subroutine Godunov_first_order_upwind_limiter_funcs
-!==================================================================================================  
-    subroutine Upwind_second_order_limiter_funcs(this, ratio, omega, delta )
-    class(Upwind_second_order), intent(in)   :: this
-    real(rp), intent(in)    :: ratio, omega
-    real(rp), intent(out)   :: delta
-    
-    delta = zero
-    return
-    end subroutine Upwind_second_order_limiter_funcs    
 !==================================================================================================
-    subroutine Upwind_TVD_super_bee01_limiter_funcs(this, ratio, omega, delta )
-    class(Upwind_TVD_super_bee01), intent(in)   :: this
-    real(rp), intent(in)    :: ratio, omega
-    real(rp), intent(out)   :: delta
-    
-    real(rp)  phi, phir, denor
-!
-      phi             = zero
-      if(ratio.ge.zero)phi = two*r
-      if(ratio.ge.half)phi = one
-!     
-      if(ratio.ge.one)then
-         denor = one - omega + (one + omega)*ratio
-         phir  = two/denor
-         phi   = min(phir, ratio)
-         phi   = min(phi, two)
-      endif
-!
-      delta = phi!*delta
-    return
-    end subroutine Upwind_TVD_super_bee01_limiter_funcs       
-!==================================================================================================
-    subroutine Upwind_TVD_VAN_LEER_limiter_funcs(this, ratio, omega, delta)
-!   
-!   purpose: to compute a van leer type slope limiter delta
-!   
-    implicit none
-    class(Upwind_TVD_VAN_LEER), intent(in)  :: this
-    real(rp), intent(in)    :: ratio, omega
-    real(rp), intent(out)   :: delta
-!   
-!   declaration of variables
-!   
-    real(rp)  denor, phi, phir
-!   
-    phi = zero
-!   
-    if(ratio.ge.zero)then
-       denor = one - omega + (one + omega)*ratio
-       phir  = two/denor
-       phi   = two*ratio/(one + ratio)
-       phi   = min(phi, phir)
-    endif
-!   
-    delta    = phi!*delta
-!   
-    end subroutine Upwind_TVD_VAN_LEER_limiter_funcs  
-!==================================================================================================
-    subroutine Upwind_TVD_VAN_ALBADA_limiter_funcs(this, ratio, omega, delta)
-!
-!   purpose: to compute a van albada type slope limiter delta
-!
-    implicit none
-!
-!   declaration of variables
-!
-    class(Upwind_TVD_VAN_ALBADA), intent(in)  :: this
-    real(rp), intent(in)    :: ratio, omega
-    real(rp), intent(out)   :: delta
-    real(rp)    :: denor, phi, phir
-!
-    phi = zero
-!
-    if(ratio.ge.zero)then
-       denor = one - omega + (one + omega)*ratio
-       phir  = two/denor
-       phi   = ratio*(one + ratio)/(one + ratio*ratio)
-       phi   = min(phi, phir)
-    endif
-!
-    delta    = phi!*delta
-!
-    end subroutine Upwind_TVD_VAN_ALBADA_limiter_funcs
-!==================================================================================================
-    subroutine Upwind_TVD_super_bee_limiter_funcs(this, ratio, omega, delta)
+    subroutine UST_super_bee_limiter_funcs(this, a, b, omega, delta)
 !
 !   purpose: to compute a superbee type slope limiter delta
 !
@@ -220,15 +76,15 @@ MODULE MODULE_MUSCL
 !
 !   declaration of variables
 !
-    class(Upwind_TVD_super_bee),  intent(in)  :: this
-    real(rp), intent(in)    :: ratio, omega
+    class(UST_super_bee),  intent(in)  :: this
+    real(rp), intent(in)    :: a, b, omega
     real(rp), intent(out)   :: delta
     real(rp)  denor, phi, phir
 !
-      phi = max(zero, min(two*ratio, one), min(ratio, two))
+      phi = (sign(one, a) + sign(one, b)) / two * max(min(omega*abs(a), abs(b)), min(abs(a), omega*abs(b)))
     delta = phi
 !
-    end subroutine Upwind_TVD_super_bee_limiter_funcs    
+    end subroutine UST_super_bee_limiter_funcs    
 !==================================================================================================    
     subroutine muscle(iVal, limite, first, last, tree)
     implicit none
@@ -324,37 +180,84 @@ MODULE MODULE_MUSCL
 !> delete limiter    
     deallocate(factory%limiter)
     return
+    
+! ===> CONTAINS <==================================================================================
     contains
-
+! =================================================================================================
+    
     subroutine  MUSCL_single(tree)
     implicit none
     type(quadtree), pointer, intent(inout)  :: tree
     real(rp)                                :: delta
     
     type(quadtree), pointer                 :: curr_C, adj_c
-    real(rp), dimension(2)                  :: dr
+    real(rp), dimension(2)                  :: dr, w_curr, w_adj
+    real(rp)                                :: omega, temp
 
-    curr_c => tree
-     adj_c => tree%adj_north
+    ! body
+     omega = third              ! setup the parameter of muscl scheme
+    curr_c => tree              ! current cell
+    ! ===> north cell <============================================================================
+    if ( associated(tree%adj_north))  then 
+        adj_c => tree%adj_north    ! adjoint cell
+    else
+        adj_c => tree
+    end if
     
-    delta = adj_c%data%w(iVal) - curr_c%data%w(iVal)
+    call muscl_single_edge(curr_c, adj_c)
     
-    dr = half*(curr_c%pts(1)%coord(:) + curr_c%pts(2)%coord(:)) - curr_c%pts(5)%coord(:)
+    ! ===> east cell <=============================================================================
+    if ( associated(tree%adj_east))  then 
+        adj_c => tree%adj_east    ! adjoint cell
+    else
+        adj_c => tree
+    end if
     
+    call muscl_single_edge(curr_c, adj_c)
     
-    ! ===> compute limiter funcs 
-    !call limiter%l_funcs(ratio, omega, delta)
+    ! ===> south <=================================================================================
+    if ( associated(tree%adj_south))  then 
+        adj_c => tree%adj_south    ! adjoint cell
+    else
+        adj_c => tree
+    end if
     
-    ! ===> compute muscl reconstruction
-    tree%data%recons(iVal)%x_r = tree%data%w(iVal) + half*delta
+    call muscl_single_edge(curr_c, adj_c)   
+    
+    ! ===> west <==================================================================================
+    if ( associated(tree%adj_west))  then 
+        adj_c => tree%adj_west    ! adjoint cell
+    else
+        adj_c => tree
+    end if
+    
+    call muscl_single_edge(curr_c, adj_c)   
     
     return
     end subroutine MUSCL_single
     
-    end subroutine muscle
+    subroutine muscl_single_edge(curr_c, adj_c)
+    implicit none
+    type(quadtree), intent(inout)   :: curr_c, adj_c
     
-!==================================================================================================
-
+    real(rp), dimension(2)          :: dr, w_curr
+    real(rp)                        :: delta, temp
+    
+    ! body 
+    delta = adj_c%data%w(iVal) - curr_c%data%w(iVal)
+    
+    dr(:) = half*(curr_c%pts(1)%coord(:) + curr_c%pts(2)%coord(:)) - curr_c%pts(5)%coord(:)
+      
+    ! ===> compute limiter funcs <=================================================================
+    call weighted_least_square(iVal, curr_c, w_curr)
+    call limiter%l_funcs(two*dot_product(w_curr,dr) - delta, delta, omega, temp)
+    
+    ! ===> compute muscl reconstruction <==========================================================
+    curr_c%data%recons(iVal)%x_r = curr_c%data%w(iVal) + half*temp
+    
+    end subroutine muscl_single_edge
+    
+    end subroutine muscle
 !==================================================================================================
 !
       subroutine sbslic(r, omega, delta)
